@@ -478,8 +478,38 @@ body {
    03 — Education
 ──────────────────────────────────────────────────────────── */
 .section-education {
-  background: linear-gradient(135deg, #0a0f2e 0%, #0d1a3a 60%, #0a1428 100%);
+  background:
+    radial-gradient(ellipse 80% 80% at 80% 50%, rgba(30, 60, 140, 0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 50%, rgba(15, 35, 90, 0.4) 0%, transparent 60%),
+    #0d1530;
   display: block;
+}
+
+/* Animated glow behind the Mac model (right side) */
+.section-education::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 50% 60% at 25% 50%, rgba(40, 80, 200, 0.12) 0%, transparent 70%);
+  animation: about-pulse 10s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Bokeh blobs */
+.section-education::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle 320px at 85% 25%, rgba(110, 30, 210, 0.35) 0%, transparent 70%),
+    radial-gradient(circle 260px at 60% 75%, rgba(20, 70, 230, 0.30) 0%, transparent 70%),
+    radial-gradient(circle 200px at 15% 30%, rgba(20, 110, 190, 0.20) 0%, transparent 70%),
+    radial-gradient(circle 280px at 95% 70%, rgba(210, 70, 20, 0.18) 0%, transparent 70%);
+  filter: blur(55px);
+  animation: bokeh-drift 22s ease-in-out infinite alternate;
 }
 
 #education-canvas {
@@ -500,7 +530,7 @@ body {
   z-index: 2;
   display: flex;
   align-items: flex-start;
-  padding: calc(5.5rem + 50px) 2rem 4rem 4rem;
+  padding: calc(5.5rem + 80px) 2rem 4rem 4rem;
   pointer-events: none;
 }
 
@@ -516,6 +546,17 @@ body {
 .section-education.visible .ed-caption {
   opacity: 1;
   transform: none;
+}
+
+.ed-logo {
+  display: block;
+  max-width: 280px;
+  max-height: 120px;
+  width: auto;
+  height: auto;
+  margin-top: calc(0.4rem + 30px);
+  align-self: flex-start;
+  object-fit: contain;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -787,14 +828,14 @@ body {
   position: absolute;
   top: 12px;
   right: 14px;
-  width: 30px;
-  height: 30px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.10);
   color: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.25);
   cursor: pointer;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 700;
   line-height: 1;
   display: flex;

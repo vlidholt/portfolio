@@ -69,23 +69,81 @@ export function initEducation(sectionEl, scrollContainer) {
   rimWarm.position.set(-1.5, 1.5, -3);
   scene.add(rimWarm);
 
-  // ── Video texture (Mutant Dungeon gameplay) ──────────────────────────
-  const video          = document.createElement('video');
-  video.src            = mutantDungeonUrl;
-  video.loop           = true;
-  video.muted          = true;
-  video.playsInline    = true;
-  video.crossOrigin    = 'anonymous';
-  video.play().catch(() => {}); // start immediately; retry on section visible
-
-  const videoTexture        = new THREE.VideoTexture(video);
-  videoTexture.colorSpace   = THREE.SRGBColorSpace;
-  videoTexture.flipY        = false; // model UVs are already top-to-bottom
+  // ── Video + "Click to play" composite screen texture ────────────────
+  const video       = document.createElement('video');
+  video.src         = mutantDungeonUrl;
+  video.loop        = true;
+  video.muted       = true;
+  video.playsInline = true;
+  video.crossOrigin = 'anonymous';
+  video.play().catch(() => {});
 
   // Also retry play when the section scrolls into view
   new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting) video.play().catch(() => {});
   }, { threshold: 0.1 }).observe(sectionEl);
+
+  // Intermediate canvas so we can composite the video frame + prompt text.
+  const SCREEN_W = 640;
+  const SCREEN_H = 480;
+  const screenCanvas = document.createElement('canvas');
+  screenCanvas.width  = SCREEN_W;
+  screenCanvas.height = SCREEN_H;
+  const screenCtx    = screenCanvas.getContext('2d');
+
+  const screenTex          = new THREE.CanvasTexture(screenCanvas);
+  screenTex.colorSpace     = THREE.SRGBColorSpace;
+  screenTex.flipY          = false; // model UVs are already top-to-bottom
+
+  // "Click to play" prompt fades out forever once the user clicks.
+  let showPrompt = true;
+
+  function drawScreenFrame(time) {
+    // Draw current video frame (black frame if video not ready yet)
+    if (video.readyState >= 2) {
+      screenCtx.drawImage(video, 0, 0, SCREEN_W, SCREEN_H);
+    } else {
+      screenCtx.fillStyle = '#000';
+      screenCtx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+    }
+
+    if (showPrompt) {
+      // Gently pulse the prompt opacity
+      const pulse = 0.65 + 0.35 * Math.sin(time * 0.0022);
+
+      // Text + pill — measure first so the pill hugs the text
+      const label = 'CLICK TO PLAY';
+      const font  = 'bold 51px Inter, system-ui, sans-serif';
+      screenCtx.font = font;
+      const textW  = screenCtx.measureText(label).width;
+      const pillW  = textW + 64;
+      const pillH  = 82;
+      const pillR  = 16;
+      const px     = (SCREEN_W - pillW) / 2;
+      const py     = (SCREEN_H - pillH) / 2;
+
+      // Dark pill behind the text
+      screenCtx.save();
+      screenCtx.globalAlpha = 0.55 * pulse;
+      screenCtx.fillStyle   = '#000';
+      screenCtx.beginPath();
+      screenCtx.roundRect(px, py, pillW, pillH, pillR);
+      screenCtx.fill();
+      screenCtx.restore();
+
+      // Text
+      screenCtx.save();
+      screenCtx.globalAlpha  = pulse;
+      screenCtx.font         = font;
+      screenCtx.textAlign    = 'center';
+      screenCtx.textBaseline = 'middle';
+      screenCtx.fillStyle    = '#fff';
+      screenCtx.fillText(label, SCREEN_W / 2, SCREEN_H / 2);
+      screenCtx.restore();
+    }
+
+    screenTex.needsUpdate = true;
+  }
 
   // ── State ────────────────────────────────────────────────────────────
   let macGroup      = null;
@@ -149,8 +207,8 @@ export function initEducation(sectionEl, scrollContainer) {
       //    - "Apple Macintosh.004" (4 mats: dark_grey + beiges)     → the disk drive slot
       //    We target only the 2-material mesh (the screen) and leave the rest untouched.
       const screenMat = new THREE.MeshStandardMaterial({
-        map:               videoTexture,
-        emissiveMap:       videoTexture,
+        map:               screenTex,
+        emissiveMap:       screenTex,
         emissive:          new THREE.Color(1, 1, 1),
         emissiveIntensity: 0.6,
         roughness:         0.05,
@@ -173,7 +231,34 @@ export function initEducation(sectionEl, scrollContainer) {
           : screenMat;
       });
 
-      // 5. Initial pose
+      // 5. Soft drop shadow — a horizontal oval with a blurred radial gradient
+      const shadowSize  = size.x; // already in world-space units after scale
+      const shadowGeo   = new THREE.PlaneGeometry(shadowSize * 2.2, shadowSize * 0.9);
+      const shadowCvs   = document.createElement('canvas');
+      shadowCvs.width   = 256;
+      shadowCvs.height  = 256;
+      const sCtx        = shadowCvs.getContext('2d');
+      const grad        = sCtx.createRadialGradient(128, 128, 0, 128, 128, 128);
+      grad.addColorStop(0,    'rgba(0,0,0,0.85)');
+      grad.addColorStop(0.45, 'rgba(0,0,0,0.45)');
+      grad.addColorStop(1,    'rgba(0,0,0,0)');
+      sCtx.fillStyle = grad;
+      sCtx.fillRect(0, 0, 256, 256);
+      const shadowMat  = new THREE.MeshBasicMaterial({
+        map:         new THREE.CanvasTexture(shadowCvs),
+        transparent: true,
+        depthWrite:  false,
+      });
+      const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
+      shadowMesh.rotation.x = -Math.PI / 2;
+      shadowMesh.position.set(
+        macGroup.position.x,
+        macGroup.position.y - size.y / 2 - 0.02,
+        macGroup.position.z + 0.05,
+      );
+      scene.add(shadowMesh);
+
+      // 6. Initial pose
       macGroup.rotation.x = 0.04;
       macGroup.rotation.y = targetRotY;
       currentRotY         = targetRotY;
@@ -222,6 +307,7 @@ export function initEducation(sectionEl, scrollContainer) {
 
   canvas.addEventListener('click', (e) => {
     if (screenHit(e) && zoomDir === 0 && zoomT === 0) {
+      showPrompt = false;
       frozenRotY = macGroup ? macGroup.rotation.y : 0;
       rotFrozen  = true;
       zoomDir    = 1;
@@ -301,6 +387,7 @@ export function initEducation(sectionEl, scrollContainer) {
         }
       }
 
+      drawScreenFrame(time);
       renderer.render(scene, camera);
     },
   };
