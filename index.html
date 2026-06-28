@@ -32,8 +32,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/index-CGep-3el.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-yTnoTkB8.css">
+  <script type="module" crossorigin src="/assets/index-CuYwPT8r.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CGNcKgZ5.css">
 </head>
 <body>
 
@@ -49,24 +49,15 @@
   <!-- ─── Top navigation ─────────────────────────────────────────────── -->
   <nav id="top-nav">
     <ul class="nav-sections">
-      <li><a href="#about"          data-section="about"          class="active">Viktor</a></li>
-      <li><a href="#early-games"    data-section="early-games"               >Early Games</a></li>
-      <li><a href="#casual-games"   data-section="casual-games"              >Casual &amp; Mobile</a></li>
-      <li><a href="#game-tools"     data-section="game-tools"                >Dev Tools</a></li>
-      <li><a href="#google-flutter" data-section="google-flutter"            >Google &amp; Flutter</a></li>
-      <li><a href="#serverpod"      data-section="serverpod"                 >Serverpod</a></li>
+      <li><a href="#about"       data-section="about"       class="active">Viktor</a></li>
+      <li><a href="#early-games" data-section="early-games"               >Early Games</a></li>
+      <li><a href="#education"   data-section="education"                 >Education</a></li>
+      <li><a href="#casual-games" data-section="casual-games"             >Casual Games</a></li>
+      <li><a href="#dev-tools"   data-section="dev-tools"                 >Dev Tools</a></li>
+      <li><a href="#flutter"     data-section="flutter"                   >Flutter</a></li>
+      <li><a href="#serverpod"   data-section="serverpod"                 >Serverpod</a></li>
     </ul>
   </nav>
-
-  <!-- ─── Side dot navigation ──────────────────────────────────────────── -->
-  <div id="side-nav">
-    <button class="dot active" data-section="about"         title="About Me"></button>
-    <button class="dot"        data-section="early-games"   title="Early Games"></button>
-    <button class="dot"        data-section="casual-games"  title="Casual &amp; Mobile Games"></button>
-    <button class="dot"        data-section="game-tools"    title="Game Development Tools"></button>
-    <button class="dot"        data-section="google-flutter" title="Google &amp; Flutter"></button>
-    <button class="dot"        data-section="serverpod"     title="Serverpod"></button>
-  </div>
 
   <!-- ─── Scroll container ─────────────────────────────────────────────── -->
   <div id="scroll-container">
@@ -85,7 +76,7 @@
           <div class="about-text-card">
             <p class="about-bio">
               I'm Viktor, a software engineer, team leader, designer, and speaker with Silicon
-              Valley experience from <strong>Google</strong> and <strong>Zynga</strong>. My
+              Valley experience from Google and Zynga. My
               award-winning development tools have been used to build tens of thousands of apps
               and games. I've held lectures at MIT, UC Berkeley, Carnegie Mellon, and at many
               conferences worldwide.
@@ -96,6 +87,13 @@
         <!-- Right: empty spacer so the grid stays two-column -->
         <div class="about-model-col"></div>
 
+      </div>
+
+      <!-- Scroll prompt -->
+      <div class="scroll-prompt" aria-hidden="true">
+        <svg class="scroll-chevron" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="2,2 12,12 22,2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
     </section>
 
@@ -108,19 +106,38 @@
             <h2 class="eg-title">Early Games</h2>
             <p class="eg-bio">
               My programming journey started in the early 1990s on a Macintosh Plus,
-              armed with nothing but a book about C programming and an unhealthy
-              obsession with games.
+              armed with nothing but a book about C and an unhealthy obsession with games.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 03 · Casual & Mobile Games ──────────────────────────────────── -->
+    <!-- 03 · Education ──────────────────────────────────────────────── -->
+    <section id="education" class="section section-education">
+      <canvas id="education-canvas"></canvas>
+      <div class="ed-overlay">
+        <div class="ed-caption">
+          <div class="eg-card">
+            <h2 class="eg-title">Education</h2>
+            <p class="eg-bio">
+              I published my first game, Mutant Dungeon VR, in my final year of
+              high school. Then, I earned my Master's in Computer Science from
+              Uppsala University.
+            </p>
+            <p class="eg-bio">
+              Click the screen to play (desktop only).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Casual Games ───────────────────────────────────────────── -->
     <section id="casual-games" class="section section-placeholder section-casual">
       <div class="ph-content">
-        <span class="ph-number">03</span>
-        <h2 class="ph-title">Casual &amp; Mobile Games</h2>
+        <span class="ph-number">04</span>
+        <h2 class="ph-title">Casual Games</h2>
         <p class="ph-sub">Award-winning titles shipped to tens of millions of players across iOS and Android</p>
         <div class="ph-tags">
           <span>iOS</span><span>Android</span><span>Zynga</span><span>Unity</span>
@@ -128,11 +145,11 @@
       </div>
     </section>
 
-    <!-- 04 · Game Development Tools ─────────────────────────────────── -->
-    <section id="game-tools" class="section section-placeholder section-tools">
+    <!-- 05 · Dev Tools ──────────────────────────────────────────────── -->
+    <section id="dev-tools" class="section section-placeholder section-tools">
       <div class="ph-content">
-        <span class="ph-number">04</span>
-        <h2 class="ph-title">Game Dev Tools</h2>
+        <span class="ph-number">05</span>
+        <h2 class="ph-title">Dev Tools</h2>
         <p class="ph-sub">SpriteBuilder — award-winning 2D game editor used by tens of thousands of devs</p>
         <div class="ph-tags">
           <span>SpriteBuilder</span><span>Cocos2D</span><span>Apportable</span>
@@ -140,11 +157,11 @@
       </div>
     </section>
 
-    <!-- 05 · Google & Flutter ───────────────────────────────────────── -->
-    <section id="google-flutter" class="section section-placeholder section-google">
+    <!-- 06 · Flutter ────────────────────────────────────────────────── -->
+    <section id="flutter" class="section section-placeholder section-google">
       <div class="ph-content">
-        <span class="ph-number">05</span>
-        <h2 class="ph-title">Google &amp; Flutter</h2>
+        <span class="ph-number">06</span>
+        <h2 class="ph-title">Flutter</h2>
         <p class="ph-sub">Core Flutter team member — guest lectures at MIT, UC Berkeley, Carnegie Mellon &amp; GDC</p>
         <div class="ph-tags">
           <span>Flutter</span><span>Dart</span><span>Google</span><span>Open Source</span>
@@ -152,10 +169,10 @@
       </div>
     </section>
 
-    <!-- 06 · Serverpod ──────────────────────────────────────────────── -->
+    <!-- 07 · Serverpod ──────────────────────────────────────────────── -->
     <section id="serverpod" class="section section-placeholder section-serverpod">
       <div class="ph-content">
-        <span class="ph-number">06</span>
+        <span class="ph-number">07</span>
         <h2 class="ph-title">Serverpod</h2>
         <p class="ph-sub">A revolutionary open-source backend built for Flutter — built at scale from Stockholm</p>
         <div class="ph-tags">
