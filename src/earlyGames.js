@@ -372,17 +372,30 @@ export function initEarlyGames(sectionEl, scrollContainer) {
     const vh   = canvas.offsetHeight * zoom;
     fireAtNorm(e.offsetX / vw, e.offsetY / vh);
   });
+  // Touch: passive touchstart just records the start position so we can
+  // distinguish a tap (fire) from a swipe (navigate to next section).
+  // NOT calling preventDefault() here lets the scroll-container receive
+  // the touch and handle vertical swipes normally.
+  let _touchStartX = 0, _touchStartY = 0;
+
   canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault();
+    _touchStartX = e.touches[0].clientX;
+    _touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  canvas.addEventListener('touchend', (e) => {
+    const t  = e.changedTouches[0];
+    // Ignore if the finger moved more than 20px — it was a swipe, not a tap
+    if (Math.abs(t.clientX - _touchStartX) > 20 ||
+        Math.abs(t.clientY - _touchStartY) > 20) return;
+
     const zoom = parseFloat(document.documentElement.style.zoom) || 1;
     const rect = canvas.getBoundingClientRect();
-    const t    = e.touches[0];
-    // clientX/Y are visual; rect.left/top are layout → scale rect by zoom.
-    const vw = rect.width  * zoom;
-    const vh = rect.height * zoom;
+    const vw   = rect.width  * zoom;
+    const vh   = rect.height * zoom;
     fireAtNorm((t.clientX - rect.left * zoom) / vw,
                (t.clientY - rect.top  * zoom) / vh);
-  }, { passive: false });
+  }, { passive: true });
 
   // ── Resize ────────────────────────────────────────────────────────
   window.addEventListener('resize', () => {
