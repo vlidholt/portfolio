@@ -1,6 +1,7 @@
 import './style.css';
 import { initAbout }       from './aboutSection.js';
 import { initEarlyGames }  from './earlyGames.js';
+import { initEducation }   from './education.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const scrollContainer = document.getElementById('scroll-container');
@@ -8,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Navigation ──────────────────────────────────────────────────────
   const allSections   = [...document.querySelectorAll('.section')];
   const topNavLinks   = [...document.querySelectorAll('#top-nav a[data-section]')];
-  const sideDots      = [...document.querySelectorAll('#side-nav .dot')];
 
   function goToSection(id) {
     const el = document.getElementById(id);
@@ -24,13 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  sideDots.forEach(dot => {
-    dot.addEventListener('click', () => goToSection(dot.dataset.section));
-  });
-
   function setActiveSection(id) {
     topNavLinks.forEach(l => l.classList.toggle('active', l.dataset.section === id));
-    sideDots.forEach(d => d.classList.toggle('active', d.dataset.section === id));
   }
 
   // Reveal animation + active tracking via IntersectionObserver
@@ -61,11 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const earlyGamesSec  = document.getElementById('early-games');
   const earlyGames     = initEarlyGames(earlyGamesSec, scrollContainer);
 
+  const educationSec   = document.getElementById('education');
+  const education      = initEducation(educationSec, scrollContainer);
+
   // ── Animation loop ───────────────────────────────────────────────────
   function animate(time) {
     requestAnimationFrame(animate);
     about.update(time);
     earlyGames.update(time);
+    education.update(time);
   }
 
   requestAnimationFrame(animate);
