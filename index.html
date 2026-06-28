@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 16:9 design canvas (960×540).
+       scale = min(innerW/960, innerH/540) fits the canvas inside any screen
+       while keeping aspect ratio. Black bars (letterbox/pillarbox) show through
+       the body background. --stage-x offsets fixed-position elements so they
+       stay inside the 960-px content column. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    (function () {
+      var W = 960, H = 540;
+      function applyZoom() {
+        var scale = Math.min(window.innerWidth / W, window.innerHeight / H);
+        var el = document.documentElement;
+        el.style.zoom = scale.toFixed(5);
+        // CSS viewport size after zoom
+        var cssW = window.innerWidth  / scale;
+        var cssH = window.innerHeight / scale;
+        // Fixed design dimensions (sections are always 960×540 CSS px)
+        el.style.setProperty('--vh',      H + 'px');
+        // Horizontal/vertical offset to center the stage inside the CSS viewport
+        el.style.setProperty('--stage-x', Math.max(0, (cssW - W) / 2).toFixed(2) + 'px');
+        el.style.setProperty('--stage-y', Math.max(0, (cssH - H) / 2).toFixed(2) + 'px');
+      }
+      applyZoom();
+      window.addEventListener('resize', applyZoom);
+    })();
+  </script>
+  <title>Viktor Lidholt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-COddVPaa.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B1WM1vDP.css">
+</head>
+<body>
+
+  <!-- ─── Portrait-mode guard ──────────────────────────────────────────── -->
+  <div id="rotate-overlay" aria-live="polite">
+    <div class="rotate-card">
+      <div class="rotate-phone" aria-hidden="true"></div>
+      <p class="rotate-title">Rotate your device</p>
+      <p class="rotate-sub">This experience is designed for landscape.</p>
+    </div>
+  </div>
+
+  <!-- ─── Top navigation ─────────────────────────────────────────────── -->
+  <nav id="top-nav">
+    <ul class="nav-sections">
+      <li><a href="#about"          data-section="about"          class="active">Viktor</a></li>
+      <li><a href="#early-games"    data-section="early-games"               >Early Games</a></li>
+      <li><a href="#casual-games"   data-section="casual-games"              >Casual &amp; Mobile</a></li>
+      <li><a href="#game-tools"     data-section="game-tools"                >Dev Tools</a></li>
+      <li><a href="#google-flutter" data-section="google-flutter"            >Google &amp; Flutter</a></li>
+      <li><a href="#serverpod"      data-section="serverpod"                 >Serverpod</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── Side dot navigation ──────────────────────────────────────────── -->
+  <div id="side-nav">
+    <button class="dot active" data-section="about"         title="About Me"></button>
+    <button class="dot"        data-section="early-games"   title="Early Games"></button>
+    <button class="dot"        data-section="casual-games"  title="Casual &amp; Mobile Games"></button>
+    <button class="dot"        data-section="game-tools"    title="Game Development Tools"></button>
+    <button class="dot"        data-section="google-flutter" title="Google &amp; Flutter"></button>
+    <button class="dot"        data-section="serverpod"     title="Serverpod"></button>
+  </div>
+
+  <!-- ─── Scroll container ─────────────────────────────────────────────── -->
+  <div id="scroll-container">
+
+    <!-- 01 · About Me ───────────────────────────────────────────────── -->
+    <section id="about" class="section section-about">
+      <!-- Full-section Three.js canvas — sits behind text via z-index -->
+      <canvas id="about-canvas"></canvas>
+      <!-- grain texture overlay -->
+      <div class="about-grain" aria-hidden="true"></div>
+      <div class="about-layout">
+
+        <!-- Left: name + bio -->
+        <div class="about-text-col">
+          <h1 class="about-name">Viktor<br>Lidholt</h1>
+          <div class="about-text-card">
+            <p class="about-bio">
+              I'm Viktor, a software engineer, team leader, designer, and speaker with Silicon
+              Valley experience from <strong>Google</strong> and <strong>Zynga</strong>. My
+              award-winning development tools have been used to build tens of thousands of apps
+              and games. I've held lectures at MIT, UC Berkeley, Carnegie Mellon, and at many
+              conferences worldwide.
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: empty spacer so the grid stays two-column -->
+        <div class="about-model-col"></div>
+
+      </div>
+    </section>
+
+    <!-- 02 · Early Games ────────────────────────────────────────────── -->
+    <section id="early-games" class="section section-early-games">
+      <canvas id="early-games-canvas"></canvas>
+      <div class="eg-overlay">
+        <div class="eg-caption">
+          <div class="eg-card">
+            <h2 class="eg-title">Early Games</h2>
+            <p class="eg-bio">
+              My programming journey started in the early 1990s on a Mac Classic.
+              Armed with nothing but BASIC and an unhealthy obsession with games,
+              I built my first playable titles — pixel by pixel, one line of code at a time.
+            </p>
+            <p class="eg-bio">
+              Click the screen to intercept incoming missiles.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Casual & Mobile Games ──────────────────────────────────── -->
+    <section id="casual-games" class="section section-placeholder section-casual">
+      <div class="ph-content">
+        <span class="ph-number">03</span>
+        <h2 class="ph-title">Casual &amp; Mobile Games</h2>
+        <p class="ph-sub">Award-winning titles shipped to tens of millions of players across iOS and Android</p>
+        <div class="ph-tags">
+          <span>iOS</span><span>Android</span><span>Zynga</span><span>Unity</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Game Development Tools ─────────────────────────────────── -->
+    <section id="game-tools" class="section section-placeholder section-tools">
+      <div class="ph-content">
+        <span class="ph-number">04</span>
+        <h2 class="ph-title">Game Dev Tools</h2>
+        <p class="ph-sub">SpriteBuilder — award-winning 2D game editor used by tens of thousands of devs</p>
+        <div class="ph-tags">
+          <span>SpriteBuilder</span><span>Cocos2D</span><span>Apportable</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Google & Flutter ───────────────────────────────────────── -->
+    <section id="google-flutter" class="section section-placeholder section-google">
+      <div class="ph-content">
+        <span class="ph-number">05</span>
+        <h2 class="ph-title">Google &amp; Flutter</h2>
+        <p class="ph-sub">Core Flutter team member — guest lectures at MIT, UC Berkeley, Carnegie Mellon &amp; GDC</p>
+        <div class="ph-tags">
+          <span>Flutter</span><span>Dart</span><span>Google</span><span>Open Source</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Serverpod ──────────────────────────────────────────────── -->
+    <section id="serverpod" class="section section-placeholder section-serverpod">
+      <div class="ph-content">
+        <span class="ph-number">06</span>
+        <h2 class="ph-title">Serverpod</h2>
+        <p class="ph-sub">A revolutionary open-source backend built for Flutter — built at scale from Stockholm</p>
+        <div class="ph-tags">
+          <span>Open Source</span><span>Flutter</span><span>Dart</span><span>Startup</span>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /scroll-container -->
+
+</body>
+</html>
