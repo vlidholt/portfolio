@@ -56,11 +56,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const emulatorLoading = document.getElementById('emulator-loading');
   const topNav          = document.getElementById('top-nav');
 
-  let emulatorOpen = false;
+  let emulatorOpen    = false;
+  let expectingLoad   = false; // true only while the emulator URL is loading
 
-  // Hide loading indicator once the iframe content is interactive
+  // Hide loading indicator only when the emulator page itself has loaded —
+  // not when the iframe navigates to about:blank on close.
   emulatorFrame.addEventListener('load', () => {
-    emulatorLoading.classList.add('hidden');
+    if (expectingLoad) {
+      expectingLoad = false;
+      emulatorLoading.classList.add('hidden');
+    }
   });
 
   // Called when the Three.js scene dispatches 'open-emulator' (user clicked screen)
@@ -68,8 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emulatorOpen) return;
     emulatorOpen = true;
 
-    // Reset loading state each time the overlay opens
+    // Show loading indicator and arm the flag before setting src
     emulatorLoading.classList.remove('hidden');
+    expectingLoad = true;
 
     // Set src synchronously — still within the user-gesture call stack from the
     // original click. Browsers expire the user-gesture context almost immediately,
@@ -104,8 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
       emulatorOverlay.classList.remove('closing');
       emulatorOverlay.setAttribute('aria-hidden', 'true');
       document.dispatchEvent(new CustomEvent('close-emulator'));
-      emulatorFrame.src = '';
-      emulatorLoading.classList.remove('hidden'); // ready for next open
+      expectingLoad = false;                        // disarm before navigating away
+      emulatorFrame.src = 'about:blank';            // reliably unloads the emulator
+      emulatorLoading.classList.remove('hidden');   // ready for next open
     }, 380);
   }
 
