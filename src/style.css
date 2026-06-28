@@ -427,7 +427,7 @@ body {
 ──────────────────────────────────────────────────────────── */
 .section-early-games {
   background:
-    url('/assets/background/kiddo.jpeg') center / cover no-repeat;
+    url('/assets/background/kiddo.webp') center / cover no-repeat;
   display: block;
 }
 
@@ -454,11 +454,11 @@ body {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 46%;
+  width: calc(46% + 100px);
   z-index: 2;
   display: flex;
-  align-items: center;
-  padding: 6rem 4rem 4rem 2rem;
+  align-items: flex-start;
+  padding: 5.5rem 4rem 4rem 2rem;
   pointer-events: none;
 }
 
@@ -491,7 +491,7 @@ body {
 
 .eg-title {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-size: clamp(1.3rem, 2.1vw, 1.9rem);
   font-weight: 800;
   letter-spacing: -0.03em;
   color: #fff;

@@ -21,11 +21,11 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { OutputPass }     from 'three/examples/jsm/postprocessing/OutputPass.js';
 
 import macintoshUrl from '../assets/3d/macintosh.glb?url';
-import kiddoUrl     from '../assets/background/kiddo.jpeg';
+import kiddoUrl     from '../assets/background/kiddo.webp';
 import { MissileCommand, GAME_W, GAME_H } from './missileCommand.js';
 
 const TARGET_HEIGHT = 0.80;
-const REST_ROT_Y    =  0.62; // resting Y-angle when fully in view — more toward centre
+const REST_ROT_Y    =  0.85; // resting Y-angle when fully in view — more toward centre
 
 // ── Bloom settings ────────────────────────────────────────────────────
 const BLOOM_STRENGTH        = 0.25;
@@ -204,7 +204,7 @@ export function initEarlyGames(sectionEl, scrollContainer) {
 
       // Shift the Mac left and slightly down.
       const halfVisibleW = camZ * Math.tan(fovRad / 2); // half-height of view in world units
-      macGroup.position.x -= halfVisibleW * 0.68;
+      macGroup.position.x -= halfVisibleW * 0.865;
       macGroup.position.y -= halfVisibleW * 0.08; // push toward the bottom
 
       // 4. Disable per-material tone-mapping so OutputPass applies it once
