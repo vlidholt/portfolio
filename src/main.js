@@ -2,6 +2,7 @@ import './style.css';
 import { initAbout }       from './aboutSection.js';
 import { initEarlyGames }  from './earlyGames.js';
 import { initEducation }   from './education.js';
+import { initCasualGames } from './casualGames.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const scrollContainer = document.getElementById('scroll-container');
@@ -132,12 +133,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const educationSec   = document.getElementById('education');
   const education      = initEducation(educationSec, scrollContainer);
 
+  const casualGamesSec = document.getElementById('casual-games');
+  const casualGames    = initCasualGames(casualGamesSec, scrollContainer);
+
   // ── Animation loop ───────────────────────────────────────────────────
   function animate(time) {
     requestAnimationFrame(animate);
     about.update(time);
     earlyGames.update(time);
     education.update(time);
+    casualGames.update(time);
   }
 
   requestAnimationFrame(animate);

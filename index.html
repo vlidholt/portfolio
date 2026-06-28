@@ -131,13 +131,14 @@
     </section>
 
     <!-- 04 · Casual Games ───────────────────────────────────────────── -->
-    <section id="casual-games" class="section section-placeholder section-casual">
-      <div class="ph-content">
-        <span class="ph-number">04</span>
-        <h2 class="ph-title">Casual Games</h2>
-        <p class="ph-sub">Award-winning titles shipped to tens of millions of players across iOS and Android</p>
-        <div class="ph-tags">
-          <span>iOS</span><span>Android</span><span>Zynga</span><span>Unity</span>
+    <section id="casual-games" class="section section-casual-games">
+      <canvas id="casual-games-canvas"></canvas>
+
+      <!-- Text panel: lives on the right side, mirrors the style of other sections -->
+      <div class="cg-overlay" id="cg-text">
+        <div class="cg-card">
+          <h2 class="cg-title" id="cg-title"></h2>
+          <p  class="cg-desc"  id="cg-desc"></p>
         </div>
       </div>
     </section>
