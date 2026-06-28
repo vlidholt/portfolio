@@ -294,6 +294,17 @@ body {
   will-change: transform;
 }
 
+/* Text panels — prevent iOS from initiating text-selection on touch,
+   which would block the scroll container from receiving the gesture.
+   Also ensure pan-y is allowed so vertical swipes always scroll. */
+.about-text-col,
+.eg-overlay,
+.ed-overlay {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
+}
+
 /* ── Right column — text content ── */
 .about-text-col {
   display: flex;

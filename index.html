@@ -11,42 +11,20 @@
   <script>
     (function () {
       var W = 960, H = 540;
-
-      // On touch devices (phones/tablets) the browser toolbar shrinks
-      // window.innerHeight so our canvas ends up smaller than the physical screen.
-      // screen.width/height always reflect the full device screen in CSS px
-      // (orientation-invariant on iOS), so we use those on coarse-pointer devices.
-      // With viewport-fit=cover the canvas fills the screen and the toolbar
-      // floats over the bottom edge instead of shrinking the canvas.
-      var isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
-
       function applyZoom() {
-        var vW, vH;
-        if (isTouchDevice) {
-          // Full screen dimensions in CSS px, corrected for current orientation
-          var isLandscape   = window.innerWidth > window.innerHeight;
-          var screenShort   = Math.min(screen.width, screen.height);
-          var screenLong    = Math.max(screen.width, screen.height);
-          vW = isLandscape ? screenLong  : screenShort;
-          vH = isLandscape ? screenShort : screenLong;
-        } else {
-          vW = window.innerWidth;
-          vH = window.innerHeight;
-        }
-
-        var scale = Math.min(vW / W, vH / H);
+        var scale = Math.min(window.innerWidth / W, window.innerHeight / H);
         var el    = document.documentElement;
         el.style.zoom = scale.toFixed(5);
-        var cssW  = vW / scale;
-        var cssH  = vH / scale;
+        var cssW  = window.innerWidth  / scale;
+        var cssH  = window.innerHeight / scale;
         el.style.setProperty('--vh',      H + 'px');
         el.style.setProperty('--stage-x', Math.max(0, (cssW - W) / 2).toFixed(2) + 'px');
         el.style.setProperty('--stage-y', Math.max(0, (cssH - H) / 2).toFixed(2) + 'px');
       }
-
       applyZoom();
       window.addEventListener('resize', applyZoom);
-      // visualViewport fires on iOS when the toolbar shows/hides
+      // visualViewport fires on iOS when the toolbar shows/hides, keeping the
+      // layout in sync without any extra work on our part.
       if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', applyZoom);
       }
