@@ -1,14 +1,17 @@
-name: Deploy to GitHub Pages
+name: Build check
+
+# Cloudflare Pages handles deployment automatically on push to main.
+# This workflow just verifies the build succeeds.
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -22,10 +25,3 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-
