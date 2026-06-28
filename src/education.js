@@ -39,6 +39,7 @@ export function initEducation(sectionEl, scrollContainer) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(w, h);
+  canvas.style.touchAction = 'pan-y'; // allow vertical swipe-scroll; Three.js sets none
   renderer.outputColorSpace    = THREE.SRGBColorSpace;
   renderer.toneMapping         = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;

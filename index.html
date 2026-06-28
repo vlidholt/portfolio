@@ -11,21 +11,45 @@
   <script>
     (function () {
       var W = 960, H = 540;
+
+      // On touch devices (phones/tablets) the browser toolbar shrinks
+      // window.innerHeight so our canvas ends up smaller than the physical screen.
+      // screen.width/height always reflect the full device screen in CSS px
+      // (orientation-invariant on iOS), so we use those on coarse-pointer devices.
+      // With viewport-fit=cover the canvas fills the screen and the toolbar
+      // floats over the bottom edge instead of shrinking the canvas.
+      var isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+
       function applyZoom() {
-        var scale = Math.min(window.innerWidth / W, window.innerHeight / H);
-        var el = document.documentElement;
+        var vW, vH;
+        if (isTouchDevice) {
+          // Full screen dimensions in CSS px, corrected for current orientation
+          var isLandscape   = window.innerWidth > window.innerHeight;
+          var screenShort   = Math.min(screen.width, screen.height);
+          var screenLong    = Math.max(screen.width, screen.height);
+          vW = isLandscape ? screenLong  : screenShort;
+          vH = isLandscape ? screenShort : screenLong;
+        } else {
+          vW = window.innerWidth;
+          vH = window.innerHeight;
+        }
+
+        var scale = Math.min(vW / W, vH / H);
+        var el    = document.documentElement;
         el.style.zoom = scale.toFixed(5);
-        // CSS viewport size after zoom
-        var cssW = window.innerWidth  / scale;
-        var cssH = window.innerHeight / scale;
-        // Fixed design dimensions (sections are always 960×540 CSS px)
+        var cssW  = vW / scale;
+        var cssH  = vH / scale;
         el.style.setProperty('--vh',      H + 'px');
-        // Horizontal/vertical offset to center the stage inside the CSS viewport
         el.style.setProperty('--stage-x', Math.max(0, (cssW - W) / 2).toFixed(2) + 'px');
         el.style.setProperty('--stage-y', Math.max(0, (cssH - H) / 2).toFixed(2) + 'px');
       }
+
       applyZoom();
       window.addEventListener('resize', applyZoom);
+      // visualViewport fires on iOS when the toolbar shows/hides
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', applyZoom);
+      }
     })();
   </script>
   <title>Viktor Lidholt</title>

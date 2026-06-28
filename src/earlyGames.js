@@ -64,6 +64,10 @@ export function initEarlyGames(sectionEl, scrollContainer) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(w, h);
+  // Three.js sets touch-action:none on every canvas, which blocks the scroll
+  // container from receiving vertical swipes. Override to pan-y so the browser
+  // still handles scroll gestures while touch events fire normally for the game.
+  canvas.style.touchAction = 'pan-y';
   renderer.outputColorSpace    = THREE.SRGBColorSpace;
   // Tone-mapping is applied once by OutputPass; disable per-material
   // tonemapping by choosing NoToneMapping here and leaving it to OutputPass.
