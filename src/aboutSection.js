@@ -19,7 +19,7 @@ import coinUrl            from '../assets/3d/coin.glb?url';
 import dashUrl            from '../assets/3d/dash.glb?url';
 import spaceshipPinkUrl   from '../assets/3d/spaceship-pink.glb?url';
 import spaceshipYellowUrl from '../assets/3d/spaceship-yellow.glb?url';
-import houseplantUrl      from '../assets/3d/Houseplant.glb?url';
+import houseplantUrl      from '../assets/3d/houseplant.glb?url';
 import flowerPotUrl       from '../assets/3d/flower-pot-licence.glb?url';
 import gameboyUrl         from '../assets/3d/gameboy-license.glb?url';
 import crystalUrl         from '../assets/3d/crystal.glb?url';
