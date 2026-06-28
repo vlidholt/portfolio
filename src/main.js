@@ -49,6 +49,72 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('about').classList.add('visible');
   setActiveSection('about');
 
+  // ── Emulator overlay ────────────────────────────────────────────────
+  const emulatorOverlay = document.getElementById('emulator-overlay');
+  const emulatorFrame   = document.getElementById('emulator-frame');
+  const emulatorClose   = document.querySelector('.emulator-close');
+  const emulatorLoading = document.getElementById('emulator-loading');
+  const topNav          = document.getElementById('top-nav');
+
+  let emulatorOpen = false;
+
+  // Hide loading indicator once the iframe content is interactive
+  emulatorFrame.addEventListener('load', () => {
+    emulatorLoading.classList.add('hidden');
+  });
+
+  // Called when the Three.js scene dispatches 'open-emulator' (user clicked screen)
+  function openEmulator() {
+    if (emulatorOpen) return;
+    emulatorOpen = true;
+
+    // Reset loading state each time the overlay opens
+    emulatorLoading.classList.remove('hidden');
+
+    // Set src synchronously — still within the user-gesture call stack from the
+    // original click. Browsers expire the user-gesture context almost immediately,
+    // so a setTimeout here would cause WebAudio (and thus the emulator) to stall.
+    emulatorFrame.src = 'https://mutantdungeon.viktorious.com/';
+
+    emulatorOverlay.removeAttribute('aria-hidden');
+    emulatorOverlay.classList.remove('closing');
+    emulatorOverlay.classList.add('open');
+
+    // Allow close button to be reached by keyboard
+    emulatorClose.removeAttribute('tabindex');
+
+    topNav.style.opacity      = '0';
+    topNav.style.pointerEvents = 'none';
+  }
+
+  function closeEmulator() {
+    if (!emulatorOpen) return;
+    emulatorOpen = false;
+
+    // Fade overlay out (no delay on close)
+    emulatorOverlay.classList.remove('open');
+    emulatorOverlay.classList.add('closing');
+    emulatorClose.setAttribute('tabindex', '-1');
+    topNav.style.opacity      = '';
+    topNav.style.pointerEvents = '';
+
+    // After overlay has faded, tell education.js to zoom back out
+    // and unload the iframe
+    setTimeout(() => {
+      emulatorOverlay.classList.remove('closing');
+      emulatorOverlay.setAttribute('aria-hidden', 'true');
+      document.dispatchEvent(new CustomEvent('close-emulator'));
+      emulatorFrame.src = '';
+      emulatorLoading.classList.remove('hidden'); // ready for next open
+    }, 380);
+  }
+
+  document.addEventListener('open-emulator', openEmulator);
+  emulatorClose.addEventListener('click', closeEmulator);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && emulatorOpen) closeEmulator();
+  });
+
   // ── Scenes ──────────────────────────────────────────────────────────
   const aboutSec       = document.getElementById('about');
   const about          = initAbout(aboutSec, scrollContainer);

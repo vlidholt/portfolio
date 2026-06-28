@@ -1,4 +1,9 @@
 /*
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Embedder-Policy: require-corp
+  # COOP/COEP intentionally omitted:
+  # The portfolio itself does not use SharedArrayBuffer.
+  # The embedded emulator (mutantdungeon.viktorious.com) carries its own
+  # COOP/COEP headers and is cross-origin isolated within its own iframe.
+  # Having COOP: same-origin here would put the iframe in a separate browsing
+  # context group, blocking user-activation propagation from the parent click
+  # into the iframe — causing the emulator to stall waiting for a gesture.
   Cross-Origin-Resource-Policy: cross-origin

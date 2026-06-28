@@ -181,6 +181,31 @@
 
   </div><!-- /scroll-container -->
 
+  <!-- ─── Emulator overlay ─────────────────────────────────────────────── -->
+  <!-- The overlay IS the beige monitor bezel — fills the full 960×540 canvas. -->
+  <div id="emulator-overlay" aria-hidden="true">
+    <button class="emulator-close" aria-label="Close" tabindex="-1">✕</button>
+    <div class="emulator-screen-wrap">
+      <div class="emulator-loading" id="emulator-loading">
+        <div class="emulator-loading-dots">
+          <span class="emulator-loading-dot"></span>
+          <span class="emulator-loading-dot"></span>
+          <span class="emulator-loading-dot"></span>
+        </div>
+        <p>Loading emulator</p>
+      </div>
+      <iframe
+        id="emulator-frame"
+        src=""
+        allow="cross-origin-isolated"
+        allowfullscreen
+      ></iframe>
+    </div>
+    <p class="emulator-instructions">
+      <strong>Arrow keys</strong> to move. <strong>Ctrl</strong> to shoot. View help for full instructions.
+    </p>
+  </div>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>
