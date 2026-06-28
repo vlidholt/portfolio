@@ -1,36 +1,21 @@
 /**
  * Early Games section — Three.js scene with an old Macintosh model.
  *
- * Postprocessing pipeline (EffectComposer):
- *   RenderPass → UnrealBloomPass → OutputPass
- *
- * The Mac screen uses a high emissiveIntensity + blue emissive so it alone
- * exceeds the bloom threshold.  The glow spreads over the 3-D scene (Mac
- * body, background photo) — not just the flat screen rectangle.
- *
- * Background photo is loaded directly into Three.js (scene.background) with
- * CSS-cover behaviour via texture offset / repeat so the EffectComposer has a
- * fully opaque framebuffer to work with.
+ * Background photo is a plain CSS background-image so it is rendered exactly
+ * as-is, with no post-processing.  The Three.js canvas is transparent and
+ * composites the Mac model on top.  The screen material keeps an emissive
+ * colour tint for the phosphor-glow look without any bloom post-processing.
  */
 
 import * as THREE from 'three';
-import { GLTFLoader }     from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass }     from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { OutputPass }     from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import macintoshUrl from '../assets/3d/macintosh.glb?url';
 import kiddoUrl     from '../assets/background/kiddo.webp';
 import { MissileCommand, GAME_W, GAME_H } from './missileCommand.js';
 
-const TARGET_HEIGHT = 0.80;
-const REST_ROT_Y    =  0.85; // resting Y-angle when fully in view — more toward centre
-
-// ── Bloom settings ────────────────────────────────────────────────────
-const BLOOM_STRENGTH        = 0.25;
-const BLOOM_RADIUS          = 0.00;
-const BLOOM_THRESHOLD       = 1.00;
+const TARGET_HEIGHT          = 0.80;
+const REST_ROT_Y             = 0.85;
 const SCREEN_EMISSIVE_TARGET = 1.50;
 
 export function initEarlyGames(sectionEl, scrollContainer) {
@@ -61,47 +46,30 @@ export function initEarlyGames(sectionEl, scrollContainer) {
 
   const { w, h } = sectionSize();
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  // Background photo is rendered as a plain CSS background so it is completely
+  // unaffected by the Three.js post-processing pipeline (bloom, tone-mapping).
+  // The canvas is made transparent so it composites on top of the photo.
+  sectionEl.style.backgroundImage    = `url(${kiddoUrl})`;
+  sectionEl.style.backgroundSize     = 'cover';
+  sectionEl.style.backgroundPosition = 'center';
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(w, h);
+  renderer.setClearColor(0x000000, 0); // fully transparent clear
   // Three.js sets touch-action:none on every canvas, which blocks the scroll
   // container from receiving vertical swipes. Override to pan-y so the browser
   // still handles scroll gestures while touch events fire normally for the game.
-  canvas.style.touchAction = 'pan-y';
-  renderer.outputColorSpace    = THREE.SRGBColorSpace;
-  // Tone-mapping is applied once by OutputPass; disable per-material
-  // tonemapping by choosing NoToneMapping here and leaving it to OutputPass.
-  // (OutputPass reads renderer.toneMapping, so we set what we want there.)
-  renderer.toneMapping         = THREE.ACESFilmicToneMapping;
+  canvas.style.touchAction  = 'pan-y';
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping      = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
 
   // ── Scene & camera ────────────────────────────────────────────────
   const scene  = new THREE.Scene();
+  // No scene.background — the CSS photo shows through the transparent canvas.
   const camera = new THREE.PerspectiveCamera(42, w / h, 0.001, 5000);
   camera.position.set(0, 0, 5);
-
-  // ── Background photo (CSS-cover behaviour) ────────────────────────
-  const bgTexture = new THREE.TextureLoader().load(kiddoUrl, () => {
-    bgTexture.colorSpace = THREE.SRGBColorSpace;
-    _coverBg();
-    scene.background = bgTexture;
-  });
-
-  function _coverBg() {
-    if (!bgTexture.image) return;
-    const imgA  = bgTexture.image.width / bgTexture.image.height;
-    const { w: sw, h: sh } = sectionSize();
-    const scrA  = sw / sh;
-    if (scrA > imgA) {
-      const s = imgA / scrA;
-      bgTexture.repeat.set(1, s);
-      bgTexture.offset.set(0, (1 - s) / 2);
-    } else {
-      const s = scrA / imgA;
-      bgTexture.repeat.set(s, 1);
-      bgTexture.offset.set((1 - s) / 2, 0);
-    }
-  }
 
   // ── Lighting ──────────────────────────────────────────────────────
   // Lights can be generous now that bloom threshold is 1.0 — the Mac body
@@ -123,22 +91,6 @@ export function initEarlyGames(sectionEl, scrollContainer) {
   // ── Screen canvas texture (source = wrapper with bezel) ──────────
   const screenTexture      = new THREE.CanvasTexture(screenCanvas);
   screenTexture.colorSpace = THREE.SRGBColorSpace;
-
-  // ── EffectComposer ────────────────────────────────────────────────
-  const composer  = new EffectComposer(renderer);
-  const renderPas = new RenderPass(scene, camera);
-  composer.addPass(renderPas);
-
-  const bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(w, h),
-    BLOOM_STRENGTH,
-    BLOOM_RADIUS,
-    BLOOM_THRESHOLD,
-  );
-  composer.addPass(bloomPass);
-
-  const outputPass = new OutputPass();
-  composer.addPass(outputPass);
 
   // ── State ─────────────────────────────────────────────────────────
   let macGroup       = null;
@@ -410,9 +362,6 @@ export function initEarlyGames(sectionEl, scrollContainer) {
     camera.aspect  = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
-    composer.setSize(w, h);
-    bloomPass.setSize(w, h);
-    _coverBg();
     onScroll();
   });
 
@@ -424,10 +373,9 @@ export function initEarlyGames(sectionEl, scrollContainer) {
 
       if (modelReady && macGroup) {
         currentRotY += (targetRotY - currentRotY) * 0.055;
-        // Idle sway — always active, same frequency/amplitude as the About model
         macGroup.rotation.y = currentRotY + Math.sin(time * 0.0002) * 0.08;
 
-        // Fade emissive in slowly so bloom eases in rather than popping
+        // Fade emissive in so the screen colour tint eases in gently
         if (screenMat && emissiveCurrent < SCREEN_EMISSIVE_TARGET) {
           emissiveCurrent += (SCREEN_EMISSIVE_TARGET - emissiveCurrent) * 0.04;
           screenMat.emissiveIntensity = emissiveCurrent;
@@ -447,7 +395,7 @@ export function initEarlyGames(sectionEl, scrollContainer) {
       );
 
       screenTexture.needsUpdate = true;
-      composer.render();          // ← EffectComposer instead of renderer.render
+      renderer.render(scene, camera);
     },
   };
 }

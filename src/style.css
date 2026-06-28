@@ -408,19 +408,11 @@ body {
    02 — Early Games
 ──────────────────────────────────────────────────────────── */
 .section-early-games {
-  background:
-    url('/assets/background/kiddo.webp') center / cover no-repeat;
+  /* Background image is applied via JS (earlyGames.js) using the Vite-processed
+     URL so the path is hashed correctly in production builds. */
   display: block;
 }
 
-.section-early-games::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 70% 80% at 50% 50%, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.6) 100%);
-  z-index: 0;
-}
 
 #early-games-canvas {
   position: absolute;
@@ -436,7 +428,7 @@ body {
   top: 0;
   right: 0;
   bottom: 0;
-  width: calc(46% + 100px);
+  width: calc(46% - 110px);
   z-index: 2;
   display: flex;
   align-items: flex-start;
