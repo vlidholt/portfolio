@@ -335,7 +335,10 @@ export function initEarlyGames(sectionEl, scrollContainer) {
 
   // ── Scroll → rotation ─────────────────────────────────────────────
   function onScroll() {
-    const sectionTop = sectionEl.offsetTop;
+    // Subtract scrollContainer.offsetTop so sectionTop is relative to the
+    // scroll container, not the body.  In portrait mode the flex-centered body
+    // pushes the scroll container down, making sectionEl.offsetTop non-zero.
+    const sectionTop = sectionEl.offsetTop - scrollContainer.offsetTop;
     const scrollTop  = scrollContainer.scrollTop;
     // Use the section's CSS layout height (540px), not window.innerHeight
     // (which is the visual viewport height and doesn't match after zoom).
@@ -410,6 +413,7 @@ export function initEarlyGames(sectionEl, scrollContainer) {
     composer.setSize(w, h);
     bloomPass.setSize(w, h);
     _coverBg();
+    onScroll();
   });
 
   // ── Per-frame update ──────────────────────────────────────────────

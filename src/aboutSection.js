@@ -371,7 +371,11 @@ export function initAbout(sectionEl, scrollContainer) {
 
   // ── Scroll → rotation (mirrors earlyGames.js behaviour) ──────────
   function onScroll() {
-    const sectionTop = sectionEl.offsetTop;
+    // Subtract scrollContainer.offsetTop so sectionTop is relative to the
+    // scroll container, not the body.  In portrait mode the flex-centered body
+    // pushes the scroll container down ~769 px, which would otherwise make
+    // sectionTop non-zero even when the section is at scroll position 0.
+    const sectionTop = sectionEl.offsetTop - scrollContainer.offsetTop;
     const scrollTop  = scrollContainer.scrollTop;
     const vh         = sectionEl.offsetHeight || 540;
     const norm       = (scrollTop - sectionTop) / vh;
@@ -387,6 +391,9 @@ export function initAbout(sectionEl, scrollContainer) {
     camera.aspect  = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
+    // Re-evaluate rotation after orientation change — sectionEl.offsetTop
+    // (and scrollContainer.offsetTop) change when the flex layout reflows.
+    onScroll();
   });
 
   // ── Per-frame update ──────────────────────────────────────────────

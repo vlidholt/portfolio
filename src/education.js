@@ -188,7 +188,10 @@ export function initEducation(sectionEl, scrollContainer) {
 
   // ── Scroll → rotation ─────────────────────────────────────────────
   function onScroll() {
-    const sectionTop = sectionEl.offsetTop;
+    // Subtract scrollContainer.offsetTop so sectionTop is relative to the
+    // scroll container, not the body.  In portrait mode the flex-centered body
+    // pushes the scroll container down, making sectionEl.offsetTop non-zero.
+    const sectionTop = sectionEl.offsetTop - scrollContainer.offsetTop;
     const scrollTop  = scrollContainer.scrollTop;
     const vh         = sectionEl.offsetHeight || 540;
     const norm       = (scrollTop - sectionTop) / vh;
@@ -237,6 +240,7 @@ export function initEducation(sectionEl, scrollContainer) {
     camera.aspect  = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
+    onScroll();
   });
 
   // ── Per-frame update ──────────────────────────────────────────────
